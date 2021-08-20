@@ -1,0 +1,12 @@
+.progress-bar--boundary {
+    border: 1px solid black;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    height: 10px;
+}
+.progress-bar--gauge {
+    background-color: #00b2a9;
+    border-radius: 10px;
+    height: 10px;
+    transition: 0.3s;
+}
