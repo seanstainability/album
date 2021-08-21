@@ -2,9 +2,12 @@ const express = require('express');
 const multer = require('multer');
 const { v4: uuid } = require('uuid');
 const mime = require('mime-types');
+const mongoose = require('mongoose');
+require('dotenv').config();
+const Image = require('./models/Image');
+// console.log(process.env);
 const app = express();
 const PORT = 5000;
-app.use('/uploads', express.static('uploads'));
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, './uploads'),
     filename: (req, file, cb) => cb(null, `${uuid()}.${mime.extension(file.mimetype)}`),
@@ -18,10 +21,24 @@ const upload = multer({ storage, fileFilter: (req, file, cb) => {
         fileSize: 1024 * 1024 * 5,
     }
 });
-app.post('/upload', upload.single('image'), (req, res) => {
-    console.log(req.file);
-    res.json(req.file);
-})
-app.listen(PORT, () => {
-    console.log(`Express server is listening on PORT: ${PORT}`)
-})
+mongoose.connect(process.env.MONGO_URI, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+}).then(() => {
+    console.log('MongoDB Connected!');
+    app.use('/uploads', express.static('uploads'));
+    app.post('/image', upload.single('image'), async (req, res) => {
+        console.log(req.file);
+        const image = await new Image({ key: req.file.filename, originalFileName: req.file.originalname }).save();
+        res.json(image);
+    })
+    app.get('/images', async (req, res) => {
+        const images = await Image.find();
+        res.json(images);
+    })
+    app.listen(PORT, () => {
+        console.log(`Express server is listening on PORT: ${PORT}`)
+    })
+}).catch((err) => {
+    console.log(err);
+});
