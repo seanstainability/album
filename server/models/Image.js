@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const ImageSchema = new mongoose.Schema({
     // _id 자동 생성
+    user: {
+        _id: { type: mongoose.Types.ObjectId, require: true, index: true },
+        nickname: { type: String, require: true },
+        email: { type: String, require: true },
+    },
+    public: { type: Boolean, required: true, default: false },
     key: { type: String, required: true },
     originalFileName: { type: String, required: true },
 }, {

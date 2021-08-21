@@ -1,17 +1,19 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useContext, useState} from "react";
 import axios from 'axios';
 import './UploadForm.css';
 import { toast } from "react-toastify";
 import ProgressBar from "./ProgressBar";
+import {ImageContext} from "../context/ImageContext";
 
 const UploadForm = () => {
+    const [images, setImages] = useContext(ImageContext);
     const [file, setFile] = useState(null);
     const [imgSrc, setImgSrc] = useState(null);
     const defaultFileName = '📷 이미지 파일을 업로드 해주세요.';
     const [fileName, setFileName] = useState(defaultFileName);
     const [percent, setPercent] = useState(0);
     const onChangeInput = useCallback((e) => {
-        console.log(e.target.files);
+        // console.log(e.target.files);
         const image = e.target.files[0];
         setFile(image);
         setFileName(image.name);
@@ -19,19 +21,20 @@ const UploadForm = () => {
         fileReader.readAsDataURL(image);
         fileReader.onload = (e) => setImgSrc(e.target.result);
     }, [])
-    const onSubmitForm = useCallback((e) => {
+    const onSubmitForm = useCallback(async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('image', file)
         try {
-            const res = axios.post('/image', formData, {
+            const res = await axios.post('/image', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 onUploadProgress: (e) => {
                     setPercent(Math.round((100 * e.loaded) / e.total ));
                 }
             })
+            setImages([...images, res.data]);
             toast.success('업로드 성공!');
-            console.log(res);
+            // console.log(res.data);
             setTimeout(() => {
                 setPercent(0);
                 setFileName(defaultFileName);
@@ -44,7 +47,7 @@ const UploadForm = () => {
             setFileName(defaultFileName);
             setImgSrc(null);
         }
-    }, [file])
+    }, [file, images, setImages])
 
     return (
         <>

@@ -15,6 +15,7 @@ const { MONGO_URI, PORT } = process.env;
 mongoose.connect(MONGO_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
+    useCreateIndex: true,
 }).then(() => {
     console.log('MongoDB Connected!');
     app.use('/uploads', express.static('uploads'));
