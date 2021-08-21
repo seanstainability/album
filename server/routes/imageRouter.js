@@ -45,5 +45,35 @@ imageRouter.delete('/:imgId', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 })
+imageRouter.patch('/:imgId/like', async (req, res) => {
+    try {
+        if(!req.user) throw new Error('인증된 사용자가 아닙니다.');
+        if(!mongoose.isValidObjectId(req.params.imgId)) throw new Error('올바른 이미지 경로가 아닙니다.');
+        const image = await Image.findOneAndUpdate(
+            { _id: req.params.imgId },
+            { $addToSet: { likes: req.user.id } },
+            { new: true } // 업데이트 이후 내용을 받기 위한 옵션
+        );
+        res.json(image);
+    } catch(err) {
+        console.error(err);
+        res.status(400).json({ message: err.message });
+    }
+})
+imageRouter.patch('/:imgId/unlike', async (req, res) => {
+    try {
+        if(!req.user) throw new Error('인증된 사용자가 아닙니다.');
+        if(!mongoose.isValidObjectId(req.params.imgId)) throw new Error('올바른 이미지 경로가 아닙니다.');
+        const image = await Image.findOneAndUpdate(
+            { _id: req.params.imgId },
+            { $pull: { likes: req.user.id } },
+            { new: true } // 업데이트 이후 내용을 받기 위한 옵션
+        );
+        res.json(image);
+    } catch(err) {
+        console.error(err);
+        res.status(400).json({ message: err.message });
+    }
+})
 
 module.exports = { imageRouter };

@@ -24,6 +24,6 @@ export const AuthProvider = ({ children }) => {
         } else {
             delete axios.defaults.headers.common.sessionid;
         }
-    }, [me]);
+    }, [me, sessionId]);
     return <AuthContext.Provider value={[me, setMe]}>{children}</AuthContext.Provider>
 }

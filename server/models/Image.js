@@ -7,6 +7,7 @@ const ImageSchema = new mongoose.Schema({
         nickname: { type: String, require: true },
         email: { type: String, require: true },
     },
+    likes: [{ type: mongoose.Types.ObjectId }],
     public: { type: Boolean, required: true, default: false },
     key: { type: String, required: true },
     originalFileName: { type: String, required: true },

@@ -1,0 +1,19 @@
+.img-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+@media screen and (max-width: 768px) {
+    .img-container {
+        justify-content: space-around;
+    }
+}
+.img-container img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+}
+.img-container img:hover {
+    opacity: 0.7;
+    cursor: pointer;
+}
